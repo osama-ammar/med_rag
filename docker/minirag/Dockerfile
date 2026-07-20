@@ -21,15 +21,11 @@ RUN uv pip install -r requirements.txt --system
 
 COPY src/ .
 
-# Create directory structure for Alembic
-RUN mkdir -p /app/models/db_schemes/minirag/
-
-COPY docker/minirag/alembic.ini /app/models/db_schemes/minirag/alembic.ini
+# Copy Alembic migration files
+COPY src/models/db_schemes/minirag/ /app/models/db_schemes/minirag/
 
 COPY docker/minirag/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
+# Only FastAPI service uses the entrypoint; celery services override via docker-compose command
 ENTRYPOINT ["/entrypoint.sh"]
-
-# Command to run the application
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]
