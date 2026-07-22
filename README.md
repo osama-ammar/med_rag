@@ -124,6 +124,8 @@ Key components:
 
 - [ ] Chunking and document ingestion: recursive/sentence-aware chunking, structured loaders for PDF/DOCX/HTML/CSV/transcripts
 - [ ] Retrieval and indexing: reranking, hybrid search, answer verification, Milvus/Redis Vector support, incremental reindexing
+- [ ] Visual RAG: add multimodal retrieval and image-aware reasoning support
+- [ ] Multimodal input/output: support text, image, and document fusion workflows
 - [ ] Prompt and RAG strategy: dynamic temperature/max tokens, multi-turn context, improved templates and answer formatting
 - [ ] Observability and operations: evaluation tooling, more Prometheus task metrics, better failure logging
 
