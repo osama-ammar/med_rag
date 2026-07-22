@@ -308,6 +308,17 @@
         </div>
 
         <div class="panel-block">
+          <h3>Service Dashboards</h3>
+          <div class="action-row" style="margin-top: 10px;">
+            <button id="flowerBtn" class="small-btn ghost-btn" type="button">Flower (Celery)</button>
+            <button id="grafanaBtn" class="small-btn ghost-btn" type="button">Grafana</button>
+            <button id="prometheusBtn" class="small-btn ghost-btn" type="button">Prometheus</button>
+            <button id="rabbitBtn" class="small-btn ghost-btn" type="button">RabbitMQ</button>
+            <button id="qdrantBtn" class="small-btn ghost-btn" type="button">Qdrant UI</button>
+          </div>
+        </div>
+
+        <div class="panel-block">
           <h3>Recent Activity</h3>
           <pre id="activityLog">No activity yet.</pre>
         </div>
@@ -331,6 +342,11 @@
     const activityLog = document.getElementById("activityLog");
     const statusPill = document.getElementById("statusPill");
     const fileInput = document.getElementById("fileInput");
+    const flowerBtn = document.getElementById("flowerBtn");
+    const grafanaBtn = document.getElementById("grafanaBtn");
+    const prometheusBtn = document.getElementById("prometheusBtn");
+    const rabbitBtn = document.getElementById("rabbitBtn");
+    const qdrantBtn = document.getElementById("qdrantBtn");
 
     function loadState() {
       try {
@@ -513,6 +529,12 @@
     }
 
     document.getElementById("clearChatBtn").addEventListener("click", clearChat);
+
+    flowerBtn.addEventListener("click", () => window.open("http://localhost:5555", "_blank"));
+    grafanaBtn.addEventListener("click", () => window.open("http://localhost:3000", "_blank"));
+    prometheusBtn.addEventListener("click", () => window.open("http://localhost:9090", "_blank"));
+    rabbitBtn.addEventListener("click", () => window.open("http://localhost:15672", "_blank"));
+    qdrantBtn.addEventListener("click", () => window.open("http://localhost:6333/dashboard", "_blank"));
 
     document.getElementById("createProjectBtn").addEventListener("click", () => {
       const name = projectNameInput.value.trim();
