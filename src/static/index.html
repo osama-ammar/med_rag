@@ -465,7 +465,7 @@
   </div>
 
   <script>
-    const STORAGE_KEY = "mini-rag-projects-v1";
+    const STORAGE_KEY = "med-rag-projects-v1";
     const state = {
       projects: [],
       activeProjectId: null,
@@ -505,7 +505,7 @@
     }
 
     function nextProjectId() {
-      const key = "mini-rag-next-project-id";
+      const key = "med-rag-next-project-id";
       let next = Number(localStorage.getItem(key) || "1000");
       if (next > 2147483640) next = 1000;
       localStorage.setItem(key, String(next + 1));
@@ -680,6 +680,7 @@
           </div>
         </div>
       `).join("");
+      updateWorkflowButtons();
     }
 
     window.deleteDocument = function(projectId, fileName) {
@@ -895,6 +896,7 @@
     loadState();
     renderProjects();
     renderDocuments();
+    updateWorkflowButtons();
     renderSources();
   </script>
 </body>

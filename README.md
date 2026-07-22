@@ -25,6 +25,10 @@ The web interface includes:
 - A chat-based query interface for project-specific knowledge
 - A dashboard section to open monitoring tools such as Flower, Grafana, Prometheus, RabbitMQ, and Qdrant
 
+## Acknowledgment
+
+This project is inspired by the `minirag` course by Abubakr Channed. It adapts the original architecture and UX for the `med-rag` workflow while extending the prototype with evaluation techniques, enhanced chunking, and other planned improvements documented in the TODO list.
+
 ## Architecture map
 
 The application is composed of the following connected services:
