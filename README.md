@@ -118,26 +118,10 @@ Key components:
 
 ## Future todos
 
-### Chunking and document ingestion
-- Add advanced chunking strategies, including recursive character splitting and sentence-aware chunking
-- Preserve document structure for PDFs, Word documents, HTML, CSV, and transcripts
-- Add specialized file loaders for document formats with richer metadata
-
-### Retrieval and indexing
-- Implement retrieval reranking or hybrid search strategies
-- Add answer verification or citation-based response checking
-- Support additional vector stores such as Milvus, Redis Vector, or local embeddings
-- Improve index refresh workflows and incremental reindexing
-
-### Prompt and RAG strategy
-- Add dynamic temperature, max tokens, and prompt-length controls per model
-- Support multi-turn conversation state or query refinement
-- Add better prompt templates and answer formatting for cleaner output
-
-### Observability and operations
-- Add automated evaluation tooling for query/answer quality and regression tests
-- Expand Prometheus metrics for task success/failure, queue backlog, and indexing latency
-- Improve logging for failed vector inserts, task retries, and model API errors
+- [ ] Chunking and document ingestion: recursive/sentence-aware chunking, structured loaders for PDF/DOCX/HTML/CSV/transcripts
+- [ ] Retrieval and indexing: reranking, hybrid search, answer verification, Milvus/Redis Vector support, incremental reindexing
+- [ ] Prompt and RAG strategy: dynamic temperature/max tokens, multi-turn context, improved templates and answer formatting
+- [ ] Observability and operations: evaluation tooling, more Prometheus task metrics, better failure logging
 
 ## Notes
 
