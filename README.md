@@ -141,12 +141,20 @@ Key components:
 - [ ] **Query Rewriting / Expansion:** Handle vague or conversational user inputs by routing them through a quick prompt step or HyDE (Hypothetical Document Embeddings) before hitting the vector database.
 - [ ] **Retrieval Fallback / Guardrails:** Implement a checker to grade retrieved chunks; if relevance scores fall below a certain threshold, trigger a fallback mechanism (e.g., asking the user to clarify or expanding search scope).S
 - [ ] **Automated Evaluation Framework:** Integrate an evaluation toolkit (like RAGAS) to test pipeline changes against a benchmark test set.
-- [ ] Track Core Production Metrics:
+- [X] Track Core Production Metrics:
 
-  - [ ] **Faithfulness:** Does the generator hallucinate, or is the answer strictly backed by context?
-  - [ ] **Context Precision/Recall:** Did the retriever pull the right chunks?
-  - [ ] **Answer Relevance:** Does the response address the user's intent?
+  - [X] **Faithfulness:** Does the generator hallucinate, or is the answer strictly backed by context?
+  - [X] **Context Precision/Recall:** Did the retriever pull the right chunks?
+  - [X] **Answer Relevance:** Does the response address the user's intent?
 - [ ] **Latency & Cost Monitoring:** Track round-trip time across embedding generation, vector search, reranking, and final LLM generation.
+
+## AWS Production Deployment Architecture
+
+- [ ] **Data Lake Layer:** Configure an Amazon S3 bucket for raw document staging with lifecycle rules and versioning enabled.
+- [ ] **Ingestion & Processing:** Set up S3 Event Notifications to trigger a processing script (via AWS Lambda or ECS) for document parsing and chunking.
+- [ ] **Vector Storage:** Provision Amazon OpenSearch Serverless (or Bedrock Knowledge Bases) to store vector embeddings securely.
+- [ ] **Application Backend:** Containerize the RAG API (FastAPI) using Docker and deploy via Amazon ECS with an Application Load Balancer (ALB).
+- [ ] **Secrets & Security:** Store database connection strings, API keys, and model tokens securely using AWS Secrets Manager and manage access via IAM roles.
 
 ## Notes
 
