@@ -89,15 +89,42 @@
 
     .workflow-group {
       display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .workflow-note {
+      color: var(--muted);
+      font-size: 12px;
+      padding: 8px 10px;
+      border: 1px solid rgba(79, 140, 255, 0.12);
+      border-radius: 12px;
+      background: rgba(15, 25, 43, 0.8);
+    }
+
+    .workflow-buttons {
+      display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 8px;
-      margin-top: 10px;
     }
 
     .workflow-group .small-btn {
-      padding: 10px 12px;
+      padding: 10px 10px;
       font-size: 12px;
       min-height: 40px;
+    }
+
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      background: rgba(79, 140, 255, 0.16);
+    }
+
+    .file-upload-group {
+      display: grid;
+      gap: 8px;
+      margin-top: 14px;
     }
 
     .project-item.active {
@@ -350,10 +377,18 @@
             <input id="projectNameInput" placeholder="Project name" />
             <button id="createProjectBtn" class="small-btn">Create Project</button>
           </div>
+          <div class="file-upload-group">
+            <label class="file-upload-label" for="fileInput">
+              <strong>Upload documents</strong>
+              <input id="fileInput" type="file" multiple />
+            </label>
+            <button id="uploadBtn" class="small-btn">Upload</button>
+          </div>
           <div class="workflow-group">
-            <button id="processBtn" class="small-btn secondary-btn">Process</button>
-            <button id="indexBtn" class="small-btn secondary-btn">Index</button>
-            <button id="processAndPushBtn" class="small-btn secondary-btn">Process + Index</button>
+            <div class="workflow-note">Step 1: create a project. Step 2: upload files. Step 3: process and index.</div>
+            <button id="processBtn" class="small-btn secondary-btn" disabled>Process</button>
+            <button id="indexBtn" class="small-btn secondary-btn" disabled>Index</button>
+            <button id="processAndPushBtn" class="small-btn secondary-btn" disabled>Process + Index</button>
           </div>
         </div>
 
@@ -369,13 +404,6 @@
               <strong>No project selected</strong>
               <div class="muted">Create or open a project first.</div>
             </div>
-          </div>
-          <div class="file-upload-group" style="margin-top: 10px;">
-            <label class="file-upload-label" for="fileInput">
-              <strong>Select files</strong>
-              <input id="fileInput" type="file" multiple />
-            </label>
-            <button id="uploadBtn" class="small-btn">Upload to Active Project</button>
           </div>
         </div>
       </aside>
@@ -500,10 +528,19 @@
       saveState();
       renderProjects();
       renderDocuments();
+      updateWorkflowButtons();
     }
 
     function setStatus(text) {
       statusPill.textContent = text;
+    }
+
+    function updateWorkflowButtons() {
+      const project = getActiveProject();
+      const hasFiles = project && project.documents && project.documents.length > 0;
+      processBtn.disabled = !hasFiles;
+      indexBtn.disabled = !hasFiles;
+      processAndPushBtn.disabled = !hasFiles;
     }
 
     async function triggerWorkflow(endpoint, payload, actionName) {
@@ -617,6 +654,7 @@
             <div class="muted">Create or open a project first.</div>
           </div>
         `;
+        updateWorkflowButtons();
         return;
       }
 
@@ -627,6 +665,7 @@
             <div class="muted">No files yet. Upload one or more to start.</div>
           </div>
         `;
+        updateWorkflowButtons();
         return;
       }
 
@@ -759,6 +798,7 @@
 
       saveState();
       renderDocuments();
+      updateWorkflowButtons();
       fileInput.value = "";
       if (uploadedCount > 0) {
         setStatus("Upload complete");
