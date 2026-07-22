@@ -1,6 +1,6 @@
-# Docker Setup for MiniRAG Application
+# Docker Setup for med-rag Application
 
-This directory contains the Docker setup for the MiniRAG application, including all necessary services for development and monitoring.
+This directory contains the Docker setup for the med-rag application, including all necessary services for development and monitoring.
 
 ## Services
 

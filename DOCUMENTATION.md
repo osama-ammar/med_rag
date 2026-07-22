@@ -1,8 +1,8 @@
-# mini-rag Project Documentation
+# med-rag Project Documentation
 
 ## Purpose
 
-`mini-rag` is a minimal Retrieval-Augmented Generation (RAG) service built in Python. It is designed to:
+`med-rag` is a minimal Retrieval-Augmented Generation (RAG) service built in Python. It is designed to:
 - Ingest files into a project-specific file storage.
 - Split documents into chunks.
 - Store chunk metadata in a relational database.

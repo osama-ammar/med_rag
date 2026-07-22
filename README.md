@@ -1,8 +1,8 @@
-# Mini-RAG
+# med-rag
 
-Mini-RAG is a minimal Retrieval-Augmented Generation (RAG) service for ingesting files, processing them into chunks, indexing semantic embeddings, and answering questions using a knowledge base.
+med-rag is a minimal Retrieval-Augmented Generation (RAG) service for ingesting files, processing them into chunks, indexing semantic embeddings, and answering questions using a knowledge base.
 
-![Mini-RAG Dashboard](src/static/ui-screenshot.svg)
+![med-rag Dashboard](src/static/ui-screenshot.svg)
 
 ## Overview
 

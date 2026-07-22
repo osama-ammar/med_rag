@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mini-RAG Dashboard</title>
+  <title>med-rag Dashboard</title>
   <style>
     :root {
       --bg: #07111f;
@@ -85,6 +85,19 @@
       display: flex;
       gap: 8px;
       flex-direction: column;
+    }
+
+    .workflow-group {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .workflow-group .small-btn {
+      padding: 10px 12px;
+      font-size: 12px;
+      min-height: 40px;
     }
 
     .project-item.active {
@@ -218,6 +231,59 @@
       align-items: stretch;
     }
 
+    .service-actions {
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+
+    .file-upload-group {
+      display: grid;
+      grid-template-columns: 1fr 180px;
+      gap: 10px;
+      align-items: end;
+    }
+
+    .service-menu {
+      display: grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .service-menu.hidden {
+      display: none;
+    }
+
+    .dashboard-toggle {
+      width: 100%;
+      text-align: left;
+    }
+
+    .file-upload-label {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 14px 12px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.02);
+      cursor: pointer;
+    }
+
+    .file-upload-label input[type="file"] {
+      width: auto;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: #0d1727;
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .service-button {
+      min-height: 48px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
     button {
       cursor: pointer;
       background: linear-gradient(90deg, var(--accent), var(--accent-2));
@@ -271,7 +337,7 @@
   <div class="app-shell">
     <header class="topbar">
       <div>
-        <h1>Mini-RAG Dashboard</h1>
+        <h1>med-rag Dashboard</h1>
         <p>Create projects, upload files, process them, and chat with your knowledge base.</p>
       </div>
     </header>
@@ -283,6 +349,11 @@
           <div class="project-create">
             <input id="projectNameInput" placeholder="Project name" />
             <button id="createProjectBtn" class="small-btn">Create Project</button>
+          </div>
+          <div class="workflow-group">
+            <button id="processBtn" class="small-btn secondary-btn">Process</button>
+            <button id="indexBtn" class="small-btn secondary-btn">Index</button>
+            <button id="processAndPushBtn" class="small-btn secondary-btn">Process + Index</button>
           </div>
         </div>
 
@@ -299,8 +370,8 @@
               <div class="muted">Create or open a project first.</div>
             </div>
           </div>
-          <div class="panel-actions" style="margin-top: 10px;">
-            <label class="doc-item" style="cursor:pointer; padding: 14px 12px; display: flex; flex-direction: column; gap: 8px;">
+          <div class="file-upload-group" style="margin-top: 10px;">
+            <label class="file-upload-label" for="fileInput">
               <strong>Select files</strong>
               <input id="fileInput" type="file" multiple />
             </label>
@@ -328,11 +399,6 @@
           </div>
         </div>
 
-        <div class="panel-actions" style="margin-bottom: 10px;">
-          <button id="processBtn" class="small-btn">Process Documents</button>
-          <button id="indexBtn" class="small-btn">Index Project</button>
-        </div>
-
         <form id="questionForm" class="composer">
           <textarea id="questionInput" placeholder="Ask a question about your documents..."></textarea>
           <button type="submit">Ask Question</button>
@@ -352,12 +418,13 @@
 
         <div class="panel-block">
           <h3>Service Dashboards</h3>
-          <div class="panel-actions" style="margin-top: 10px;">
-            <button id="flowerBtn" class="small-btn secondary-btn" type="button">Flower (Celery)</button>
-            <button id="grafanaBtn" class="small-btn secondary-btn" type="button">Grafana</button>
-            <button id="prometheusBtn" class="small-btn secondary-btn" type="button">Prometheus</button>
-            <button id="rabbitBtn" class="small-btn secondary-btn" type="button">RabbitMQ</button>
-            <button id="qdrantBtn" class="small-btn secondary-btn" type="button">Qdrant UI</button>
+          <button id="dashboardToggleBtn" class="small-btn secondary-btn dashboard-toggle" type="button">Open dashboards</button>
+          <div id="serviceMenu" class="service-menu hidden">
+            <button id="flowerBtn" class="small-btn secondary-btn service-button" type="button">Flower (Celery)</button>
+            <button id="grafanaBtn" class="small-btn secondary-btn service-button" type="button">Grafana</button>
+            <button id="prometheusBtn" class="small-btn secondary-btn service-button" type="button">Prometheus</button>
+            <button id="rabbitBtn" class="small-btn secondary-btn service-button" type="button">RabbitMQ</button>
+            <button id="qdrantBtn" class="small-btn secondary-btn service-button" type="button">Qdrant UI</button>
           </div>
         </div>
 
@@ -385,11 +452,16 @@
     const activityLog = document.getElementById("activityLog");
     const statusPill = document.getElementById("statusPill");
     const fileInput = document.getElementById("fileInput");
+    const processBtn = document.getElementById("processBtn");
+    const indexBtn = document.getElementById("indexBtn");
+    const processAndPushBtn = document.getElementById("processAndPushBtn");
     const flowerBtn = document.getElementById("flowerBtn");
     const grafanaBtn = document.getElementById("grafanaBtn");
     const prometheusBtn = document.getElementById("prometheusBtn");
     const rabbitBtn = document.getElementById("rabbitBtn");
     const qdrantBtn = document.getElementById("qdrantBtn");
+    const dashboardToggleBtn = document.getElementById("dashboardToggleBtn");
+    const serviceMenu = document.getElementById("serviceMenu");
 
     function loadState() {
       try {
@@ -432,6 +504,40 @@
 
     function setStatus(text) {
       statusPill.textContent = text;
+    }
+
+    async function triggerWorkflow(endpoint, payload, actionName) {
+      const project = getActiveProject();
+      if (!project) {
+        log(`Create or select a project first before ${actionName}.`);
+        setStatus("No project selected");
+        return;
+      }
+
+      setStatus(`${actionName}...`);
+      log(`${actionName} started for project "${project.name}".`);
+
+      try {
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+          log(`${actionName} failed: ${JSON.stringify(data)}`);
+          setStatus("Workflow failed");
+          return;
+        }
+
+        const taskId = data.task_id || data.workflow_task_id;
+        log(`${actionName} queued (task ${taskId}).`);
+        setStatus(`${actionName} queued`);
+      } catch (err) {
+        log(`${actionName} error: ${err}`);
+        setStatus("Request error");
+      }
     }
 
     function log(message) {
@@ -573,6 +679,11 @@
 
     document.getElementById("clearChatBtn").addEventListener("click", clearChat);
 
+    dashboardToggleBtn.addEventListener("click", () => {
+      serviceMenu.classList.toggle("hidden");
+      dashboardToggleBtn.textContent = serviceMenu.classList.contains("hidden") ? "Open dashboards" : "Hide dashboards";
+    });
+
     flowerBtn.addEventListener("click", () => window.open("http://localhost:5555", "_blank"));
     grafanaBtn.addEventListener("click", () => window.open("http://localhost:3000", "_blank"));
     prometheusBtn.addEventListener("click", () => window.open("http://localhost:9090", "_blank"));
@@ -657,70 +768,34 @@
       }
     });
 
-    document.getElementById("processBtn").addEventListener("click", async () => {
+    processBtn.addEventListener("click", () => {
       const project = getActiveProject();
-      if (!project) {
-        log("Select a project first.");
-        return;
-      }
-
-      setStatus("Processing...");
-      try {
-        const body = {
-          chunk_size: 100,
-          overlap_size: 20,
-          do_reset: 0
-        };
-
-        const res = await fetch(`/api/v1/data/process/${project.id}`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body)
-        });
-
-        const data = await res.json();
-        if (!res.ok) {
-          log(`Process failed: ${JSON.stringify(data)}`);
-          setStatus("Process failed");
-          return;
-        }
-
-        log(`Processed ${data.processed_files || 0} file(s) and inserted ${data.inserted_chunks || 0} chunks.`);
-        setStatus("Process complete");
-      } catch (err) {
-        log(`Process error: ${err}`);
-        setStatus("Process error");
-      }
+      if (!project) return;
+      triggerWorkflow(`/api/v1/data/process/${project.id}`, {
+        file_id: null,
+        chunk_size: 100,
+        overlap_size: 20,
+        do_reset: 0
+      }, "Process documents");
     });
 
-    document.getElementById("indexBtn").addEventListener("click", async () => {
+    indexBtn.addEventListener("click", () => {
       const project = getActiveProject();
-      if (!project) {
-        log("Select a project first.");
-        return;
-      }
+      if (!project) return;
+      triggerWorkflow(`/api/v1/nlp/index/push/${project.id}`, {
+        do_reset: 0
+      }, "Index project");
+    });
 
-      setStatus("Indexing...");
-      try {
-        const res = await fetch(`/api/v1/nlp/index/push/${project.id}`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ do_reset: 0 })
-        });
-
-        const data = await res.json();
-        if (!res.ok) {
-          log(`Index failed: ${JSON.stringify(data)}`);
-          setStatus("Index failed");
-          return;
-        }
-
-        log(`Indexed ${data.inserted_items_count || 0} items successfully.`);
-        setStatus("Index complete");
-      } catch (err) {
-        log(`Index error: ${err}`);
-        setStatus("Index error");
-      }
+    processAndPushBtn.addEventListener("click", () => {
+      const project = getActiveProject();
+      if (!project) return;
+      triggerWorkflow(`/api/v1/data/process-and-push/${project.id}`, {
+        file_id: null,
+        chunk_size: 100,
+        overlap_size: 20,
+        do_reset: 0
+      }, "Process and index");
     });
 
     document.getElementById("questionForm").addEventListener("submit", async (event) => {
