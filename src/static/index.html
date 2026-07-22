@@ -204,9 +204,52 @@
     .composer { display: flex; flex-direction: column; gap: 10px; }
     .composer textarea { min-height: 90px; resize: vertical; }
 
-    .action-row { display: flex; flex-direction: column; gap: 8px; }
+    .action-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
 
-    .small-btn { padding: 9px 12px; font-size: 13px; }
+    .panel-actions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    button {
+      cursor: pointer;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      color: white;
+      border: none;
+      font-weight: 600;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 35px rgba(0, 0, 0, 0.18);
+    }
+
+    button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .secondary-btn {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .small-btn {
+      padding: 10px 14px;
+      font-size: 13px;
+      min-width: 130px;
+    }
 
     pre {
       white-space: pre-wrap;
@@ -256,8 +299,8 @@
               <div class="muted">Create or open a project first.</div>
             </div>
           </div>
-          <div class="action-row" style="margin-top: 10px;">
-            <label class="doc-item" style="cursor:pointer;">
+          <div class="panel-actions" style="margin-top: 10px;">
+            <label class="doc-item" style="cursor:pointer; padding: 14px 12px; display: flex; flex-direction: column; gap: 8px;">
               <strong>Select files</strong>
               <input id="fileInput" type="file" multiple />
             </label>
@@ -285,7 +328,7 @@
           </div>
         </div>
 
-        <div class="action-row" style="margin-bottom: 10px;">
+        <div class="panel-actions" style="margin-bottom: 10px;">
           <button id="processBtn" class="small-btn">Process Documents</button>
           <button id="indexBtn" class="small-btn">Index Project</button>
         </div>
@@ -309,12 +352,12 @@
 
         <div class="panel-block">
           <h3>Service Dashboards</h3>
-          <div class="action-row" style="margin-top: 10px;">
-            <button id="flowerBtn" class="small-btn ghost-btn" type="button">Flower (Celery)</button>
-            <button id="grafanaBtn" class="small-btn ghost-btn" type="button">Grafana</button>
-            <button id="prometheusBtn" class="small-btn ghost-btn" type="button">Prometheus</button>
-            <button id="rabbitBtn" class="small-btn ghost-btn" type="button">RabbitMQ</button>
-            <button id="qdrantBtn" class="small-btn ghost-btn" type="button">Qdrant UI</button>
+          <div class="panel-actions" style="margin-top: 10px;">
+            <button id="flowerBtn" class="small-btn secondary-btn" type="button">Flower (Celery)</button>
+            <button id="grafanaBtn" class="small-btn secondary-btn" type="button">Grafana</button>
+            <button id="prometheusBtn" class="small-btn secondary-btn" type="button">Prometheus</button>
+            <button id="rabbitBtn" class="small-btn secondary-btn" type="button">RabbitMQ</button>
+            <button id="qdrantBtn" class="small-btn secondary-btn" type="button">Qdrant UI</button>
           </div>
         </div>
 
