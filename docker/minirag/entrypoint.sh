@@ -11,4 +11,5 @@ cd /app
 echo "Starting FastAPI server..."
 # The 'exec' command is critical here to keep the process alive
 export PYTHONPATH=$PYTHONPATH:/app
-exec python -m celery -A celery_app worker "$@"
+exec python -m uvicorn main:app --host 0.0.0.0 --port 8000
+
