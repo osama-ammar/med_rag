@@ -122,12 +122,31 @@ Key components:
 
 ## Future todos
 
-- [ ] Chunking and document ingestion: recursive/sentence-aware chunking, structured loaders for PDF/DOCX/HTML/CSV/transcripts
-- [ ] Retrieval and indexing: reranking, hybrid search, answer verification, Milvus/Redis Vector support, incremental reindexing
-- [ ] Visual RAG: add multimodal retrieval and image-aware reasoning support
-- [ ] Multimodal input/output: support text, image, and document fusion workflows
-- [ ] Prompt and RAG strategy: dynamic temperature/max tokens, multi-turn context, improved templates and answer formatting
-- [ ] Observability and operations: evaluation tooling, more Prometheus task metrics, better failure logging
+**Stage 0: Advanced Data Ingestion & Chunking**
+
+- [ ] **Implement Smart Chunking:** Move away from fixed-size chunking.
+
+  - [ ] Add Recursive Character Chunking (to keep paragraphs and sentences naturally grouped).
+  - [ ] Add Semantic Chunking (splitting chunks based on embedding similarity drops between sentences).
+- [ ] **Metadata Enrichment:** Attach rich metadata to chunks (e.g., source file name, section headers, timestamps) to enable precise filtering.
+- [ ] **Stage 1: Dense & Sparse Retrieval (Hybrid Search)**
+
+  - [ ] Implement vector embeddings (Dense Search) for semantic matching.
+  - [ ] Implement a keyword-matching algorithm like BM25 (Sparse Search) for exact IDs or terms.
+  - [ ] Combine and re-score results using Reciprocal Rank Fusion (RRF).
+- [ ] **Stage 2: Cross-Encoder Reranking**
+
+  - [ ] Integrate a reranker model (e.g., `sentence-transformers` with a Cross-Encoder like `bge-reranker-base`).
+  - [ ] Update the retrieval pipeline to fetch a wider pool (e.g., top 20 chunks) and filter them down to the top 3-5 via the reranker before sending to the generator.
+- [ ] **Query Rewriting / Expansion:** Handle vague or conversational user inputs by routing them through a quick prompt step or HyDE (Hypothetical Document Embeddings) before hitting the vector database.
+- [ ] **Retrieval Fallback / Guardrails:** Implement a checker to grade retrieved chunks; if relevance scores fall below a certain threshold, trigger a fallback mechanism (e.g., asking the user to clarify or expanding search scope).S
+- [ ] **Automated Evaluation Framework:** Integrate an evaluation toolkit (like RAGAS) to test pipeline changes against a benchmark test set.
+- [ ] Track Core Production Metrics:
+
+  - [ ] **Faithfulness:** Does the generator hallucinate, or is the answer strictly backed by context?
+  - [ ] **Context Precision/Recall:** Did the retriever pull the right chunks?
+  - [ ] **Answer Relevance:** Does the response address the user's intent?
+- [ ] **Latency & Cost Monitoring:** Track round-trip time across embedding generation, vector search, reranking, and final LLM generation.
 
 ## Notes
 
