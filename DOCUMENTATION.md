@@ -3,6 +3,7 @@
 ## Purpose
 
 `med-rag` is a minimal Retrieval-Augmented Generation (RAG) service built in Python. It is designed to:
+
 - Ingest files into a project-specific file storage.
 - Split documents into chunks.
 - Store chunk metadata in a relational database.
@@ -16,42 +17,43 @@ The project is educational in nature and demonstrates how to connect file ingest
 The application is organized into clear layers:
 
 1. **API layer**
+
    - `src/main.py`: FastAPI application startup and dependency setup.
    - `src/routes/`: HTTP endpoints grouped by purpose.
      - `routes/base.py`: health/welcome endpoint.
      - `routes/data.py`: file upload and processing APIs.
      - `routes/nlp.py`: indexing, search, and RAG answer APIs.
-
 2. **Controller layer**
+
    - `src/controllers/`: business logic for file validation, project management, document processing, and NLP operations.
      - `DataController.py`: validate uploads and create safe file paths.
      - `ProjectController.py`: manage project folders.
      - `ProcessController.py`: load and chunk files.
      - `NLPController.py`: handle vector search, indexing, and RAG prompt generation.
-
 3. **Background task layer**
+
    - `src/tasks/`: asynchronous heavy work via Celery.
      - `file_processing.py`: parse files, split text into chunks, persist chunks into DB.
      - `data_indexing.py`: create or reset vector collections and insert embeddings.
      - `process_workflow.py`: additional workflow orchestration.
      - `maintenance.py`: recurring cleanup jobs.
-
 4. **Storage and model layer**
+
    - `src/models/`: database access and ORM models.
      - `ProjectModel.py`: create or fetch projects.
      - `AssetModel.py`: store uploaded asset records.
      - `ChunkModel.py`: manage text chunk persistence.
      - `db_schemes/`: SQLAlchemy table definitions.
-
 5. **Provider abstraction layer**
+
    - `src/stores/llm/`: LLM providers and factory.
      - `LLMProviderFactory.py`: selects OpenAI or Cohere provider.
      - `OpenAIProvider.py`, `CoHereProvider.py`: wrap generation and embedding APIs.
    - `src/stores/vectordb/`: vector database providers.
      - `VectorDBProviderFactory.py`: selects Qdrant or PGVector backend.
      - `QdrantDBProvider.py`, `PGVectorProvider.py`: implement vector index storage and search.
-
 6. **Configuration and utilities**
+
    - `src/helpers/config.py`: reads `.env` via `pydantic-settings`.
    - `src/utils/metrics.py`: registers Prometheus metrics.
    - `src/utils/idempotency_manager.py`: guards Celery tasks against repeated execution.
@@ -91,6 +93,7 @@ The application is organized into clear layers:
 ## Tradeoffs and Technology Comparison
 
 ### Vector database backends
+
 - **Qdrant**
   - Pros: purpose-built vector database, optimized insert/search, easier setup for local/embedded usage via file path.
   - Pros: supports semantic search and payload metadata naturally.
@@ -103,6 +106,7 @@ The application is organized into clear layers:
   - Good when: you need a compact deployment and want to manage vectors alongside relational data.
 
 ### LLM / embedding provider selection
+
 - **OpenAI**
   - Pros: wide model support, mature API, strong default generation quality.
   - Cons: network dependency, cost, and API latency.
@@ -113,6 +117,7 @@ The application is organized into clear layers:
   - Good when: you want a second vendor or need a provider with different pricing or model behavior.
 
 ### Chunking and document processing
+
 - **Current simple splitter**
   - Pros: easy, predictable flow, minimal dependencies.
   - Cons: may cut documents at arbitrary boundaries and lose sentence/paragraph coherence.
@@ -123,6 +128,7 @@ The application is organized into clear layers:
   - File loader-specific chunking: use PDF or document parsers to preserve structure.
 
 ### Prompt generation and RAG strategy
+
 - **Current design**
   - Uses retrieved chunks and a template-based prompt builder.
   - Pros: separation of prompt text from code, easy to tune.
@@ -144,17 +150,17 @@ The application is organized into clear layers:
 ## How to Add a Feature
 
 1. Identify the layer:
+
    - API endpoint → add route + router entry.
    - New business behavior → add/extend controller.
    - New background job → add a Celery task in `src/tasks/`.
    - New persistence type → add model methods in `src/models/`.
    - New provider backend → implement provider class and register it in the factory.
-
 2. Keep layers separate:
+
    - Routes call controllers.
    - Controllers call models, providers, and tasks.
    - Tasks reuse controllers and provider factories when possible.
-
 3. Use config objects from `helpers.config` for environment-driven settings.
 4. Add new environment variables to `.env` and `helpers/config.py` if needed.
 5. Keep prompt content in templates instead of hardcoding text in logic.
@@ -202,22 +208,23 @@ The application is organized into clear layers:
 Use these methods to verify that the RAG pipeline is working and to measure model quality:
 
 - **Manual query verification**
+
   - Upload known documents, index them, and ask questions you already know the answer to.
   - Compare generated answers against a ground truth and note when search results are missing or hallucinated.
-
 - **Semantic search checks**
+
   - Validate that search results include relevant chunks for given queries.
   - For vector backends, compare nearest-neighbor hits from both Qdrant and PGVector if both are available.
-
 - **Prompt/answer quality checks**
+
   - Inspect `full_prompt` returned by `/api/v1/nlp/index/answer/{project_id}`.
   - Ensure the retrieved documents are coherent and that the prompt template includes enough context.
-
 - **Regression testing**
+
   - Create small datasets and use automated tests to verify that answers remain stable after changes.
   - Track metrics such as relevance, precision, and answer completeness through test scripts.
-
 - **Performance monitoring**
+
   - Measure task duration for file processing and indexing.
   - Observe vector insertion and search latency for each backend.
   - Use Prometheus metrics if available to identify bottlenecks.
@@ -227,29 +234,30 @@ Use these methods to verify that the RAG pipeline is working and to measure mode
 These are practical extensions that would improve robustness, flexibility, and production readiness:
 
 - Add more advanced chunking:
+
   - support recursive character splitting
   - preserve sentence and paragraph boundaries
   - use language-aware or semantic chunkers
-
 - Support more file formats:
-  - Word documents, rich text, HTML, CSV, and audio transcripts.
 
+  - Word documents, rich text, HTML, CSV, and audio transcripts.
 - Add better RAG prompt management:
+
   - dynamic temperature and token limits per model
   - retrieval reranking or answer verification
   - multi-turn conversation context
-
 - Improve error handling and observability:
+
   - richer API error responses
   - logging for failed vector inserts and model calls
   - more comprehensive metrics for task success/failure
-
 - Add automated evaluation tooling:
+
   - a dedicated test harness for RAG answer quality
   - golden query/answer sets and scoring functions
   - comparison dashboard for Qdrant vs PGVector results
-
 - Expand backend support:
+
   - add Redis or Milvus as additional vector stores
   - add more LLM providers and local model inference options
   - support hybrid search combining keyword and vector retrieval
@@ -264,3 +272,31 @@ These are practical extensions that would improve robustness, flexibility, and p
 - `src/stores/vectordb/VectorDBProviderFactory.py`
 
 This file should help any new contributor understand the system, locate the core modules, and extend the project safely.
+
+
+# Med-RAG Radiology Ingestion Roadmap
+
+This roadmap breaks down your first milestone: setting up local report ingestion with structured metadata and section-aware chunking using your existing architecture.
+
+---
+
+## Phase 1: Local Setup & Ollama Integration
+
+- [X] **Configure Local Providers:** Update `src/stores/llm/` to point embeddings and text generation to your local Ollama instance (`http://localhost:11434`).
+- [X] **Pull Models:** Run `ollama pull nomic-embed-text` (for embeddings) and `ollama pull llama3` (for local answer generation).
+
+## Phase 2: Sample Data & Metadata Preparation
+
+- [X] **Create Sample Dataset:** Add a `data/sample_reports/` directory to your project root.
+- [X] **Draft Test Files:** Create 3-5 text files representing radiology reports containing explicit headers (`INDICATION:`, `FINDINGS:`, `IMPRESSION:`) and basic patient attributes (e.g., `Patient Age: 74`).
+
+## Phase 3: Section-Aware Ingestion & Metadata Parsing
+
+- [ ] **Update Parser Logic (`src/controllers/`):** Write a simple regex or rule-based parser to extract patient age and clinical findings separately from raw text files.
+- [ ] **Bind Metadata to Chunks:** Ensure chunks generated by your background worker carry structured metadata payload (e.g., `age`, `modality`, `diagnosis`) alongside the text.
+
+## Phase 4: Database Storage & Verification
+
+- [ ] **Spin Up Stack:** Run `docker compose up -d` to launch PostgreSQL/PGVector, Qdrant, Celery, and FastAPI.
+- [ ] **Test Ingestion API:** Upload a sample report via the `/api/v1/data/upload/{project_id}` endpoint and trigger processing.
+- [ ] **Monitor Workers:** Check the Flower dashboard (`http://localhost:5555`) to confirm background task completion without errors.
