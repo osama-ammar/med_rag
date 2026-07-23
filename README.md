@@ -124,9 +124,9 @@ Key components:
 
 **Stage 0: Advanced Data Ingestion & Chunking**
 
-- [ ] **Implement Smart Chunking:** Move away from fixed-size chunking.
+- [X] **Implement Smart Chunking:** Move away from fixed-size chunking.
 
-  - [ ] Add Recursive Character Chunking (to keep paragraphs and sentences naturally grouped).
+  - [X] Add Recursive Character Chunking (to keep paragraphs and sentences naturally grouped).
   - [ ] Add Semantic Chunking (splitting chunks based on embedding similarity drops between sentences).
 - [ ] **Metadata Enrichment:** Attach rich metadata to chunks (e.g., source file name, section headers, timestamps) to enable precise filtering.
 - [ ] **Stage 1: Dense & Sparse Retrieval (Hybrid Search)**

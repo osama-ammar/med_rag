@@ -49,7 +49,7 @@ class Settings(BaseSettings):
     CELERY_TASK_ACKS_LATE: bool = True
     CELERY_WORKER_CONCURRENCY: int = 2
     CELERY_FLOWER_PASSWORD: str = None
-    CHUNKINGG_METHOD: str = "recursive"  # Options: recursive, csv
+    CHUNKING_METHOD: str = "csv"  # Options: recursive, csv
     
     class Config:
         env_file = ".env"

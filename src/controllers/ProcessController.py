@@ -1,3 +1,5 @@
+from asyncio.log import logger
+
 from .BaseController import BaseController
 from .ProjectController import ProjectController
 import os
@@ -23,7 +25,7 @@ class ProcessController(BaseController):
         self.app_settings = get_settings()
         self.project_id = project_id
         self.project_path = ProjectController().get_project_path(project_id=project_id)
-        self.chunking_method = self.app_settings.CHUNKINGG_METHOD
+        self.chunking_method = self.app_settings.CHUNKING_METHOD
 
     def get_file_extension(self, file_id: str):
         return os.path.splitext(file_id)[-1]
@@ -42,9 +44,9 @@ class ProcessController(BaseController):
             if file_ext == ProcessingEnum.PDF.value:
                 return PyMuPDFLoader(file_path).load()
             
+            # Handle CSV files
             if file_ext == ProcessingEnum.CSV.value:
-                # Read directly into a Pandas DataFrame
-                return pd.read_csv(file_path)
+                return CSVLoader(file_path, encoding="utf-8").load()
 
             return None
 
@@ -70,10 +72,10 @@ class ProcessController(BaseController):
                 overlap_size=overlap_size
             )
 
-        elif self.chunking_method == "csv":
-            chunks = self.process_csv_reports(
-                df=file_content
-            )
+        # elif self.chunking_method == "csv":
+        #     chunks = self.process_csv_reports(
+        #         text=file_content
+        #     )
 
         else :
             chunks = self.process_simpler_splitter(
@@ -81,7 +83,7 @@ class ProcessController(BaseController):
                 metadatas=file_content_metadata,
                 chunk_size=chunk_size,
             )
-
+        logger.info(f"Processed {len(chunks)} chunks for file_id: {file_id} , chunking_method: {self.chunking_method}")
         return chunks
     
     # simple chunking by splitter tag (e.g., newline) 
@@ -155,24 +157,24 @@ class ProcessController(BaseController):
 
 
 
-    # Inside your get_file_loader or a new CSV handler:
-    def load_csv_reports(self, file_path: str) -> List[Document]:
-        df = pd.read_csv(file_path)
-        documents = []
-        
-        for _, row in df.iterrows():
-            # The free text report content to be chunked/embedded
-            report_text = str(row['report'])
+    # # Inside your get_file_loader or a new CSV handler:
+    # def process_csv_reports(self, text: str) -> List[Document]:
+
+    #     chunks = []
+
+    #     for _, row in df.iterrows():
+    #         # The free text report content to be chunked/embedded
+    #         report_text = str(row['report'])
             
-            # Structured metadata directly from the CSV columns
-            row_metadata = {
-                "patient_id": row['ID'],
-                "age": row['age'],
-                "breast_density": row['breast_density'],
-                "laterality": row['laterality'],
-                "source": "CSV Report"
-            }
+    #         # Structured metadata directly from the CSV columns
+    #         row_metadata = {
+    #             "patient_id": row['ID'],
+    #             "age": row['age'],
+    #             "breast_density": row['breast_density'],
+    #             "laterality": row['laterality'],
+    #             "source": "CSV Report"
+    #         }
             
-            documents.append(Document(page_content=report_text, metadata=row_metadata))
-            
-        return documents
+    #         chunks.append(Document(page_content=report_text, metadata=row_metadata))
+
+    #     return chunks

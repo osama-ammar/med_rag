@@ -1,9 +1,10 @@
 APP_NAME="med-rag"
 APP_VERSION="0.1"
 
-FILE_ALLOWED_TYPES=["text/plain", "application/pdf"]
+FILE_ALLOWED_TYPES=["text/plain", "application/pdf", "text/csv"]
 FILE_MAX_SIZE=10
 FILE_DEFAULT_CHUNK_SIZE=512000 # 512KB
+CHUNKING_METHOD="csv" # Options: recursive, csv 
 
 POSTGRES_USERNAME="postgres"
 POSTGRES_PASSWORD="postgres_password"
